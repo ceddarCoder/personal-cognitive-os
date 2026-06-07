@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PCOS HUD</title>
+    <link rel="stylesheet" href="overlay.css">
+</head>
+
+<body>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay">
+
+        <!-- CMD STRIP -->
+        <div class="cmd-strip" id="cmdStrip">
+            <div class="cs-logo">
+                <svg viewBox="0 0 12 12">
+                    <circle cx="6" cy="6" r="2" />
+                    <path d="M6 1v2M6 9v2M1 6h2M9 6h2" />
+                </svg>
+            </div>
+            <div class="cmd-mode-badge cmb-default" id="modeBadge">PCOS</div>
+            <input class="cs-in" id="csIn" placeholder="search, /note, /task, or ? to chat…" autocomplete="off"
+                spellcheck="false">
+            <span class="cmd-hint-txt" id="cmdHint">⌘K</span>
+            <div class="cmd-div"></div>
+            <div class="state-chip-wrapper" id="stateChipWrapper">
+                <div class="state-chip" id="stateChip">
+                    <div class="sdot"></div>
+                    <span id="stateLbl">—</span>
+                </div>
+                <!-- Radial menu (hidden by default) -->
+
+            </div>
+            <div class="cmd-div"></div>
+            <span class="cs-clock" id="osClock">12:00</span>
+            <button class="cs-close" onclick="closeOverlay()">
+                <svg viewBox="0 0 10 10">
+                    <path d="M2 2l6 6M8 2l-6 6" />
+                </svg>
+            </button>
+            <div class="cmd-results" id="cmdResults"></div>
+        </div>
+
+        <!-- MID ROW -->
+        <div class="mid-row">
+            <!-- LEFT PANEL -->
+            <div class="left-panel">
+                <!-- Recent Notes -->
+                <div class="gc" data-panel="notes">
+                    <div class="gc-head">
+                        <div class="gc-label">
+                            <div class="gc-icon gi-acc">
+                                <svg viewBox="0 0 8 8">
+                                    <path d="M1 1.5h6M1 3.5h5M1 5.5h4" />
+                                </svg>
+                            </div>
+                            recent
+                        </div>
+                        <button class="expand-btn" onclick="expandPanel('notes')" title="Expand">
+                            <svg viewBox="0 0 12 12">
+                                <path d="M3 3h6v6M9 3L3 9" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="gc-body" id="recentNotesBody"></div>
+                </div>
+
+                <!-- Tasks -->
+                <div class="gc" data-panel="tasks">
+                    <div class="gc-head">
+                        <div class="gc-label">
+                            <div class="gc-icon gi-amber">
+                                <svg viewBox="0 0 8 8">
+                                    <path d="M1 2l1.5 1.5L6 1M1 5l1.5 1.5L6 4.5" />
+                                </svg>
+                            </div>
+                            tasks
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span id="taskCount" style="font-family:var(--mono);font-size:9px;color:var(--red)">0
+                                open</span>
+                            <button class="expand-btn" onclick="expandPanel('tasks')" title="Expand">
+                                <svg viewBox="0 0 12 12">
+                                    <path d="M3 3h6v6M9 3L3 9" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="gc-body" id="tasksBody"></div>
+                </div>
+            </div>
+
+            <!-- CENTER ZONE -->
+            <div class="center-zone">
+                <div class="toast" id="toast">
+                    <div class="toast-dot"></div>
+                    <span class="toast-txt"></span>
+                    <button class="toast-x" onclick="this.parentElement.classList.remove('show')">✕</button>
+                </div>
+                <div class="center-hud">
+                    <div class="focus-ring">
+                        <svg class="arc-svg" viewBox="0 0 122 122">
+                            <g class="arc-spin">
+                                <circle cx="61" cy="61" r="57" fill="none" stroke="rgba(108,92,231,0.1)"
+                                    stroke-width="0.5" stroke-dasharray="4 8" />
+                            </g>
+                            <path d="M61 4 A57 57 0 0 1 118 61" fill="none" stroke="rgba(108,92,231,0.22)"
+                                stroke-width="1" stroke-linecap="round" />
+                        </svg>
+                        <div>
+                            <div class="fr-time" id="centerClock">12:00</div>
+                            <div class="fr-lbl" id="centerState">—</div>
+                        </div>
+                    </div>
+                    <div class="mini-strip">
+                        <div class="ms2">
+                            <div class="ms2-v" id="noteCount">0</div>
+                            <div class="ms2-l">notes</div>
+                        </div>
+                        <div class="ms2">
+                            <div class="ms2-v" id="focusScore">0</div>
+                            <div class="ms2-l">focus</div>
+                        </div>
+                        <div class="ms2">
+                            <div class="ms2-v" id="nodeCount">0</div>
+                            <div class="ms2-l">nodes</div>
+                        </div>
+                        <div class="ms2">
+                            <div class="ms2-v" id="openTaskCt">0</div>
+                            <div class="ms2-l">tasks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="right-panel">
+                <!-- Divergence -->
+                <div class="gc" data-panel="diverge" style="flex:1;min-height:0;">
+                    <div class="gc-head">
+                        <div class="gc-label">
+                            <div class="gc-icon gi-acc">
+                                <svg viewBox="0 0 8 8">
+                                    <path d="M4 1v6M2 3l2-2 2 2" />
+                                </svg>
+                            </div>
+                            diverge
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="gc-badge" id="divergenceNewBadge">0 new</span>
+                            <button class="expand-btn" onclick="expandPanel('diverge')" title="Expand">
+                                <svg viewBox="0 0 12 12">
+                                    <path d="M3 3h6v6M9 3L3 9" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="gc-body" id="divergenceBody"></div>
+                </div>
+
+                <!-- Context -->
+                <div class="gc" data-panel="context">
+                    <div class="gc-head">
+                        <div class="gc-label">
+                            <div class="gc-icon gi-teal">
+                                <svg viewBox="0 0 8 8">
+                                    <circle cx="4" cy="4" r="2.5" />
+                                    <path d="M4 1.5V3M4 5v1.5M1.5 4H3" />
+                                </svg>
+                            </div>
+                            context
+                        </div>
+                        <button class="expand-btn" onclick="expandPanel('context')" title="Expand">
+                            <svg viewBox="0 0 12 12">
+                                <path d="M3 3h6v6M9 3L3 9" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="gc-body">
+                        <div class="xrow"><span class="xk">window</span><span class="xv" id="activeWindow">—</span>
+                        </div>
+                        <div class="xrow"><span class="xk">state</span><span class="xpill xp-deep"
+                                id="contextStatePill"><span class="sdot" style="width:4px;height:4px"></span>—</span>
+                        </div>
+                        <div class="xrow"><span class="xk">focus</span><span class="xpill xp-acc" id="focusMinutes">0
+                                min</span></div>
+                        <div class="xrow"><span class="xk">api</span><span class="xpill xp-ok">● ok</span></div>
+                        <div class="fbar">
+                            <div class="fbar-f" id="focusBar" style="width:0%"></div>
+                        </div>
+                        <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-align:right;margin-top:2px"
+                            id="focusDaily">0 / 100 pts</div>
+                    </div>
+                </div>
+
+                <!-- Chat toggle -->
+                <div class="gc" style="cursor:pointer" id="chatToggleCard" onclick="openChat()">
+                    <div class="gc-body" style="flex-direction:row;align-items:center;gap:9px;padding:9px 11px">
+                        <div class="gc-icon gi-acc">
+                            <svg viewBox="0 0 8 8" style="width:10px;height:10px">
+                                <path d="M1 1.5h6a.5.5 0 010 1v3H4.5L3 6.5V5.5H1.5A.5.5 0 011 5V2a.5.5 0 010-1z" />
+                            </svg>
+                        </div>
+                        <span style="font-family:var(--mono);font-size:10px;color:var(--text2);flex:1">open chat</span>
+                        <span style="font-family:var(--mono);font-size:9px;color:var(--text3)">? ⏎</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HINT BAR -->
+        <div class="hint-bar">
+            <div class="hb-item"><span class="hb-k">Ctrl+Alt+P</span> capture</div>
+            <div class="hb-item"><span class="hb-k">?</span> chat</div>
+            <div class="hb-item"><span class="hb-k">/note</span> note</div>
+            <div class="hb-item"><span class="hb-k">/task</span> task</div>
+            <div class="hb-item"><span class="hb-k">Esc</span> close</div>
+        </div>
+
+        <!-- CHAT OVERLAY -->
+        <div class="chat-overlay" id="chatOverlay">
+            <div class="chat-backdrop" onclick="closeChat()"></div>
+            <div class="chat-pane">
+                <div class="pane-head">
+                    <div class="pane-head-l">
+                        <svg viewBox="0 0 12 12">
+                            <path d="M1 2h10a.5.5 0 01.5.5v7H7L5 11V9.5H1.5A.5.5 0 011 9V2.5A.5.5 0 011 2z" />
+                        </svg>
+                        pcos chat
+                    </div>
+                    <button class="ph-close" onclick="closeChat()">
+                        <svg viewBox="0 0 10 10">
+                            <path d="M2 2l6 6M8 2l-6 6" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="chat-msgs" id="chatMsgs"></div>
+                <div class="chat-foot">
+                    <div class="ci-wrap">
+                        <textarea class="ci" id="chatIn" rows="1" placeholder="ask about your notes…"
+                            onkeydown="chatKey(event)" oninput="autoResize(this)"></textarea>
+                        <span class="ci-k">⏎</span>
+                    </div>
+                    <button class="send-btn" onclick="sendChat()">
+                        <svg viewBox="0 0 12 12">
+                            <path d="M10 6H2M7 3l3 3-3 3" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPANDED PANEL OVERLAY -->
+        <div class="expanded-panel-overlay" id="expandedOverlay" onclick="if(event.target===this)closeExpanded()">
+            <div class="expanded-panel">
+                <div class="expanded-panel-head">
+                    <span id="expandedTitle"
+                        style="font-family:var(--mono);font-size:11px;color:var(--text2);letter-spacing:.06em"></span>
+                    <button class="expanded-panel-close" onclick="closeExpanded()">✕</button>
+                </div>
+                <div class="expanded-panel-body" id="expandedBody"></div>
+            </div>
+        </div>
+
+        <!-- CAPTURE MODAL -->
+        <div class="capture" id="capModal" onclick="if(event.target===this)closeCapture()">
+            <div class="cap-box">
+                <div class="cap-row">
+                    <div class="cap-ic">
+                        <svg viewBox="0 0 12 12">
+                            <path d="M6 2v8M2 6h8" />
+                        </svg>
+                    </div>
+                    <input class="cap-in" id="capIn" placeholder="capture a thought…" onkeydown="capKey(event)"
+                        autocomplete="off" spellcheck="false">
+                </div>
+                <div class="cap-modes">
+                    <div class="cpm act" data-mode="note" onclick="setCapMode('note')">note</div>
+                    <div class="cpm" data-mode="task" onclick="setCapMode('task')">task</div>
+                    <div class="cpm" data-mode="idea" onclick="setCapMode('idea')">idea</div>
+                    <div class="cap-hint"><b>⏎</b> save &nbsp;<b>Esc</b> close</div>
+                </div>
+            </div>
+        </div>
+        <div class="state-radial" id="stateRadial">
+            <!-- Items will be injected by JS -->
+        </div>
+    </div>
+
+    <!-- Qt WebChannel bridge -->
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <!-- Application logic -->
+    <script src="overlay.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCOS — Personal Cognitive OS</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="noise"></div>
+    <div id="app">
+
+        <!-- ════════════ LEFT NAV ════════════ -->
+        <nav class="nav">
+            <div class="nav-logo">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 14 14">
+                        <circle cx="7" cy="7" r="2.5" />
+                        <path d="M7 1v2M7 11v2M1 7h2M11 7h2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="logo-text">PCOS</div>
+                    <div class="logo-ver">v0.1-alpha</div>
+                </div>
+            </div>
+
+            <div class="nav-state sc-deep" id="navState">
+                <div class="sdot" style="color:var(--teal)"></div>
+                <span class="ns-text" id="navStateTxt" style="color:var(--teal)">deep_work</span>
+                <span class="ns-caret" style="color:var(--teal)">⌄</span>
+            </div>
+
+            <div class="nav-context">
+                <div class="nc-row"><span class="nc-k">window</span><span class="nc-v" style="font-size:10.5px"
+                        id="navWindow">—</span></div>
+                <div class="nc-row"><span class="nc-k">focus</span><span class="nc-pill"
+                        style="background:var(--acc-bg);color:var(--acc2);font-family:var(--mono);font-size:9px">—</span>
+                </div>
+                <div class="fbar">
+                    <div class="fbar-f" id="navFbar" style="width:0%"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:3px">
+                    <span style="font-family:var(--mono);font-size:9px;color:var(--text4)">focus</span>
+                    <span style="font-family:var(--mono);font-size:9px;color:var(--text3)" id="focusScore">0/100</span>
+                </div>
+            </div>
+
+            <div class="nav-div"></div>
+
+            <div class="nav-section">
+                <div class="nav-section-label">workspace</div>
+                <div class="nav-item act" id="ni-hud"><svg viewBox="0 0 16 16">
+                        <path d="M2 8L8 2l6 6M4 6v7h3v-4h2v4h3V6" />
+                    </svg>Dashboard</div>
+                <div class="nav-item" id="ni-notes"><svg viewBox="0 0 16 16">
+                        <rect x="2" y="2" width="12" height="12" rx="2" />
+                        <path d="M5 6h6M5 9h4" />
+                    </svg>Notes<span class="nav-badge" id="notesCount">0</span></div>
+                <div class="nav-item" id="ni-tasks"><svg viewBox="0 0 16 16">
+                        <path d="M3 5l2 2 4-4M3 10l2 2 4-4" />
+                        <path d="M13 7h-1M13 12h-1" />
+                    </svg>Tasks<span class="nav-badge red" id="tasksCount">0</span></div>
+                <div class="nav-item" id="ni-schedule"><svg viewBox="0 0 16 16">
+                        <rect x="2" y="3" width="12" height="11" rx="1.5" />
+                        <path d="M5 1v4M11 1v4M2 7h12" />
+                    </svg>Schedule</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-label">intelligence</div>
+                <div class="nav-item" id="ni-chat"><svg viewBox="0 0 16 16">
+                        <path d="M2 3h12a1 1 0 011 1v7a1 1 0 01-1 1H9l-3 2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1z" />
+                    </svg>Chat</div>
+                <div class="nav-item" id="ni-graph"><svg viewBox="0 0 16 16">
+                        <circle cx="8" cy="8" r="2" />
+                        <circle cx="3" cy="4" r="1.5" />
+                        <circle cx="13" cy="4" r="1.5" />
+                        <circle cx="3" cy="12" r="1.5" />
+                        <circle cx="13" cy="12" r="1.5" />
+                        <path d="M5 5.5l1.5 1M9.5 9.5l1.5 1M11 5.5L9.5 7M6.5 9.5L5 11" />
+                    </svg>Knowledge Graph</div>
+                <div class="nav-item" id="ni-diverge"><svg viewBox="0 0 16 16">
+                        <path d="M8 2v12M3 5l5-3 5 3M3 11l5 3 5-3" />
+                    </svg>Diverge<span class="nav-badge" id="divergeCount">0</span></div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-label">library</div>
+                <div class="nav-item" id="ni-search"><svg viewBox="0 0 16 16">
+                        <circle cx="7" cy="7" r="5" />
+                        <path d="M11 11l3 3" />
+                    </svg>Semantic Search</div>
+                <div class="nav-item" id="ni-files"><svg viewBox="0 0 16 16">
+                        <path d="M2 4a1 1 0 011-1h4l2 2h5a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" />
+                    </svg>Files</div>
+            </div>
+
+            <div class="nav-bottom">
+                <div class="nav-item" id="quickCaptureBtn"><svg viewBox="0 0 16 16">
+                        <circle cx="8" cy="8" r="6" />
+                        <path d="M8 5v6M5 8h6" />
+                    </svg>Quick Capture<span class="kbd" style="margin-left:auto">⌃⌥P</span></div>
+                <div class="nav-item" id="cmdPalBtn"><svg viewBox="0 0 16 16">
+                        <path d="M3 5l4-3 4 3M3 11l4 3 4-3M2 8h12" />
+                    </svg>Command Palette<span class="kbd" style="margin-left:auto">⌘K</span></div>
+            </div>
+        </nav>
+
+        <!-- ════════════ MAIN ════════════ -->
+        <div class="main">
+
+            <div class="topbar">
+                <div class="tb-breadcrumb"><span class="tbb-section">PCOS</span><span class="tbb-sep">/</span><span
+                        class="tbb-page" id="breadPage">Dashboard</span></div>
+                <div class="omni-wrap"><svg viewBox="0 0 14 14">
+                        <circle cx="6" cy="6" r="4.5" />
+                        <path d="M9.5 9.5l3 3" />
+                    </svg><input class="omni-in" placeholder="search everything…" id="globalSearch"></div>
+                <div class="tb-actions">
+                    <button class="tba-btn" id="hudOverlayBtn"><svg viewBox="0 0 16 16">
+                            <rect x="1" y="1" width="14" height="14" rx="2" />
+                            <path d="M4 8h8M8 4v8" />
+                        </svg></button>
+                    <button class="tba-btn" id="settingsBtn"><svg viewBox="0 0 16 16">
+                            <circle cx="8" cy="8" r="2.5" />
+                            <path
+                                d="M8 1v2M8 13v2M1 8h2M13 8h2M2.93 2.93l1.42 1.42M11.65 11.65l1.42 1.42M2.93 13.07l1.42-1.42M11.65 4.35l1.42-1.42" />
+                        </svg></button>
+                    <button class="tba-primary" id="topbarCTA"><svg viewBox="0 0 12 12">
+                            <path d="M6 2v8M2 6h8" />
+                        </svg>New Note</button>
+                </div>
+            </div>
+
+            <div class="content">
+
+                <!-- DASHBOARD -->
+                <div class="page active" id="page-hud">
+                    <div class="hud-grid">
+                        <div class="hc" style="grid-column:1/3">
+                            <div class="hc-head">
+                                <div class="hc-label">
+                                    <div class="hc-icon hi-acc"><svg viewBox="0 0 8 8">
+                                            <path d="M1 1.5h6M1 3.5h5M1 5.5h4" />
+                                        </svg></div>recent notes
+                                </div><span class="hc-action" id="hudViewAllNotes">view all →</span>
+                            </div>
+                            <div class="hc-body" id="hudRecentNotes"
+                                style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px">
+                                <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:20px">No
+                                    notes yet. Create one.</div>
+                            </div>
+                        </div>
+                        <div class="hc">
+                            <div class="hc-head">
+                                <div class="hc-label">
+                                    <div class="hc-icon hi-teal"><svg viewBox="0 0 8 8">
+                                            <circle cx="4" cy="4" r="2.5" />
+                                            <path d="M4 1.5V3M4 5v1.5M1.5 4H3" />
+                                        </svg></div>context
+                                </div>
+                            </div>
+                            <div class="stat-grid" id="hudStats">
+                                <div class="stat">
+                                    <div class="stat-v">0</div>
+                                    <div class="stat-l">notes</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-v">0</div>
+                                    <div class="stat-l">tasks</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-v">0</div>
+                                    <div class="stat-l">focus pts</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-v">0</div>
+                                    <div class="stat-l">nodes</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hc">
+                            <div class="hc-head">
+                                <div class="hc-label">
+                                    <div class="hc-icon hi-amber"><svg viewBox="0 0 8 8">
+                                            <path d="M1 2l1.5 1.5L6 1M1 5l1.5 1.5L6 4.5" />
+                                        </svg></div>open tasks
+                                </div><span class="hc-action" id="hudViewAllTasks">manage →</span>
+                            </div>
+                            <div class="hc-body" id="hudOpenTasks">
+                                <div class="empty-state" style="text-align:center;padding:12px">No open tasks.</div>
+                            </div>
+                        </div>
+                        <div class="hc">
+                            <div class="hc-head">
+                                <div class="hc-label">
+                                    <div class="hc-icon hi-acc"><svg viewBox="0 0 8 8">
+                                            <path d="M4 1v6M2 3l2-2 2 2" />
+                                        </svg></div>diverge
+                                </div><span id="divergeHudBadge"
+                                    style="font-family:var(--mono);font-size:9px;color:var(--acc2);background:var(--acc-bg);padding:1px 6px;border-radius:10px">0
+                                    new</span>
+                            </div>
+                            <div class="hc-body" id="hudDiverge"></div>
+                        </div>
+                        <div class="hc" style="grid-column:1/3">
+                            <div class="hc-head">
+                                <div class="hc-label">
+                                    <div class="hc-icon hi-blue"><svg viewBox="0 0 8 8">
+                                            <rect x="1" y="1.5" width="6" height="5.5" rx=".75" />
+                                            <path d="M2.5 0.5v2M5.5 0.5v2M1 3.5h6" />
+                                        </svg></div>today
+                                </div><span class="hc-action" id="hudViewSchedule">full schedule →</span>
+                            </div>
+                            <div class="hc-body" id="hudSchedulePreview"
+                                style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px">
+                                <div class="empty-state" style="flex:1;text-align:center;padding:12px">No events
+                                    scheduled.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTES PAGE -->
+                <div class="page" id="page-notes">
+                    <div class="notes-list-panel">
+                        <div class="nlp-head">
+                            <div class="nlp-search"><svg viewBox="0 0 14 14">
+                                    <circle cx="6" cy="6" r="4.5" />
+                                    <path d="M9.5 9.5l3 3" />
+                                </svg><input class="nlp-search-in" id="notesSearchInput" placeholder="search notes…">
+                            </div>
+                            <div class="nlp-filters" id="notesFilters">
+                                <div class="nf-btn act" data-filter="all">All</div>
+                                <div class="nf-btn" data-filter="idea">Ideas</div>
+                                <div class="nf-btn" data-filter="task">Tasks</div>
+                                <div class="nf-btn" data-filter="ref">Refs</div>
+                                <div class="nf-btn" data-filter="log">Logs</div>
+                            </div>
+                        </div>
+                        <div class="notes-list" id="notesList"></div>
+                    </div>
+                    <div class="note-editor-panel">
+                        <div class="ne-toolbar"><input class="ne-title-in" id="noteTitleIn"
+                                placeholder="Untitled note…"><button class="ne-action ne-act-ghost"
+                                id="noteLinkBtn"><svg viewBox="0 0 10 10">
+                                    <path d="M1 8L8 1M5 1h3v3" />
+                                </svg>Link</button><button class="ne-action ne-act-ghost" id="noteInfoBtn"><svg
+                                    viewBox="0 0 10 10">
+                                    <circle cx="5" cy="5" r="3.5" />
+                                    <path d="M5 3.5v2" />
+                                    <circle cx="5" cy="7" r=".4" fill="currentColor" stroke="none" />
+                                </svg>Info</button><button class="ne-action ne-act-primary" id="saveNoteBtn"><svg
+                                    viewBox="0 0 10 10">
+                                    <path d="M1 5.5l2.5 2.5 5.5-5" />
+                                </svg>Save</button><button class="ne-action ne-act-danger" id="deleteNoteBtn" title="Delete note"><svg
+                                    viewBox="0 0 10 10">
+                                    <path d="M2 3h6M3.5 3V2h3v1M3 3v5.5h4V3" />
+                                </svg>Delete</button></div>
+                        <div class="ne-meta-bar">
+                            <div class="ne-meta-item" id="noteTimestamp"><svg viewBox="0 0 10 10">
+                                    <circle cx="5" cy="5" r="3.5" />
+                                    <path d="M5 3v2.5L6.5 7" />
+                                </svg>—</div>
+                            <div class="ne-meta-item"><svg viewBox="0 0 10 10">
+                                    <path d="M1 2h8M1 5h6M1 8h7" />
+                                </svg><span id="wordCount">0</span> words</div>
+                            <div class="ne-meta-item"><svg viewBox="0 0 10 10">
+                                    <path d="M1 2h8a.5.5 0 01.5.5v5L6 9 1.5 7.5A.5.5 0 011 7V2.5A.5.5 0 011 2z" />
+                                </svg>
+                                <div class="ne-tags" id="noteTags"><span class="ne-tag-add" id="addTagBtn">+ tag</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ne-fmt-bar"><button class="fmt-btn" data-cmd="bold"><b>B</b></button><button
+                                class="fmt-btn" data-cmd="italic"><i>I</i></button><button class="fmt-btn"
+                                data-cmd="strike"><s>S</s></button>
+                            <div class="fmt-sep"></div><button class="fmt-btn" data-cmd="h1">H1</button><button
+                                class="fmt-btn" data-cmd="h2">H2</button><button class="fmt-btn"
+                                data-cmd="h3">H3</button>
+                            <div class="fmt-sep"></div><button class="fmt-btn" data-cmd="code"><svg viewBox="0 0 12 12">
+                                    <path d="M4 3L1 6l3 3M8 3l3 3-3 3" />
+                                </svg></button><button class="fmt-btn" data-cmd="quote"><svg viewBox="0 0 12 12">
+                                    <path d="M2 4h3v4H2zM7 4h3v4H7z" />
+                                </svg></button><button class="fmt-btn" data-cmd="ul"><svg viewBox="0 0 12 12">
+                                    <circle cx="2" cy="4" r="1" fill="currentColor" stroke="none" />
+                                    <circle cx="2" cy="8" r="1" fill="currentColor" stroke="none" />
+                                    <path d="M5 4h6M5 8h6" />
+                                </svg></button><button class="fmt-btn" data-cmd="ol"><svg viewBox="0 0 12 12">
+                                    <path d="M1.5 3.5h1M1.5 7.5h1v2H1.5" />
+                                    <path d="M5 4h6M5 8h6" />
+                                </svg></button>
+                            <div class="fmt-sep"></div><button class="fmt-btn" data-cmd="link"><svg viewBox="0 0 12 12">
+                                    <path d="M5 7a3 3 0 004.2.3l1.5-1.5a3 3 0 00-4.2-4.2L5 3" />
+                                    <path d="M7 5a3 3 0 00-4.2-.3L1.3 6.2a3 3 0 004.2 4.2L7 9" />
+                                </svg></button><button class="fmt-btn" data-cmd="wikilink">[[</button>
+                            <div class="fmt-sep"></div><button class="fmt-btn" id="previewToggleBtn"><svg
+                                    viewBox="0 0 12 12">
+                                    <path d="M1 2h10a.5.5 0 010 1v6a.5.5 0 010 1H1a.5.5 0 010-1V3a.5.5 0 010-1z" />
+                                    <path d="M4 5l2 2 2-2" />
+                                </svg></button>
+                        </div>
+                        <textarea class="ne-editor" id="noteEditor" placeholder="Start writing..."></textarea>
+                    </div>
+                    <div class="note-detail-panel" id="noteDetailPanel">
+                        <div class="ndp-section">
+                            <div class="ndp-label">backlinks</div>
+                            <div id="backlinksList"></div>
+                        </div>
+                        <div class="ndp-section">
+                            <div class="ndp-label">linked notes</div>
+                            <div id="linkedNotesList"></div>
+                        </div>
+                        <div class="ndp-section">
+                            <div class="ndp-label">in graph</div>
+                            <div id="noteGraphInfo"></div><button class="ne-action ne-act-ghost" id="viewInGraphBtn"
+                                style="width:100%;justify-content:center;font-size:11px;padding:5px;margin-top:2px"><svg
+                                    viewBox="0 0 10 10">
+                                    <circle cx="5" cy="5" r="2" />
+                                    <circle cx="1.5" cy="2" r="1" />
+                                    <circle cx="8.5" cy="2" r="1" />
+                                    <path d="M3 3.5L4 4.5M7 3.5L6 4.5" />
+                                </svg>View in graph</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TASKS PAGE -->
+                <div class="page" id="page-tasks">
+                    <div class="tasks-header">
+                        <div class="tasks-filters" id="taskFilters">
+                            <div class="tf-btn act" data-task-filter="all">All</div>
+                            <div class="tf-btn" data-task-filter="high">High Priority</div>
+                            <div class="tf-btn" data-task-filter="today">Due Today</div>
+                            <div class="tf-btn" data-task-filter="inprogress">In Progress</div>
+                            <div class="tf-btn" data-task-filter="done">Done</div>
+                        </div><button class="tba-primary" id="newTaskBtn"><svg viewBox="0 0 12 12">
+                                <path d="M6 2v8M2 6h8" />
+                            </svg>New Task</button>
+                    </div>
+                    <div class="tasks-body" id="kanbanColumns"></div>
+                </div>
+
+                <!-- SCHEDULE PAGE -->
+                <div class="page" id="page-schedule">
+                    <div class="sched-toolbar"><button class="sched-nav-btn" id="prevWeekBtn"><svg viewBox="0 0 12 12">
+                                <path d="M8 2L4 6l4 4" />
+                            </svg></button>
+                        <div class="sched-title" id="schedTitle">Week of —</div><button class="sched-nav-btn"
+                            id="nextWeekBtn"><svg viewBox="0 0 12 12">
+                                <path d="M4 2l4 4-4 4" />
+                            </svg></button>
+                        <div style="flex:1"></div>
+                        <div class="sched-view-btns">
+                            <div class="svb act" data-view="week">Week</div>
+                            <div class="svb" data-view="day">Day</div>
+                            <div class="svb" data-view="month">Month</div>
+                        </div><button class="tba-primary" id="newScheduleBlockBtn"><svg viewBox="0 0 12 12">
+                                <path d="M6 2v8M2 6h8" />
+                            </svg>New Block</button>
+                    </div>
+                    <div class="sched-body">
+                        <div class="sched-days" id="schedDays"></div>
+                    </div>
+                </div>
+
+                <!-- CHAT PAGE -->
+                <div class="page" id="page-chat">
+                    <div class="chat-body" id="chatBody">
+                        <div class="chat-inner" id="chatMsgs">
+                            <div style="text-align:center;padding:20px 0">
+                                <div
+                                    style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.08em">
+                                    PCOS CHAT — answers from your notes & context</div>
+                            </div>
+                            <div class="cmsg cms">
+                                <div class="cmsg-av">P</div>
+                                <div class="cmsg-content">
+                                    <div class="cmsg-name">pcos · —</div>
+                                    <div class="cmsg-bub">I'm ready. Connect your data sources to get started.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-suggestions" id="chatSuggestions"></div>
+                    <div class="chat-foot">
+                        <div class="chat-foot-inner">
+                            <div class="ci-wrap"><textarea class="ci" id="chatIn" rows="1"
+                                    placeholder="ask about your notes, tasks, projects…"></textarea>
+                                <div class="ci-footer"><span class="ci-hint">⏎ send &nbsp;·&nbsp; ⇧⏎ newline</span><span
+                                        class="ci-hint" id="chatCtx">—</span></div>
+                            </div><button class="send-btn" id="sendChatBtn"><svg viewBox="0 0 14 14">
+                                    <path d="M12 7H2M8 3l4 4-4 4" />
+                                </svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRAPH PAGE -->
+                <div class="page" id="page-graph"><canvas id="graphCanvas"></canvas>
+                    <div class="graph-ui">
+                        <div class="graph-legend">
+                            <div
+                                style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.08em;margin-bottom:8px">
+                                LEGEND</div>
+                            <div class="gl-row">
+                                <div class="gl-dot" style="background:var(--acc)"></div>project / system
+                            </div>
+                            <div class="gl-row">
+                                <div class="gl-dot" style="background:var(--teal)"></div>research / ref
+                            </div>
+                            <div class="gl-row">
+                                <div class="gl-dot" style="background:var(--amber)"></div>tool / tech
+                            </div>
+                            <div class="gl-row">
+                                <div class="gl-dot" style="background:var(--blue)"></div>people / meeting
+                            </div>
+                            <div class="gl-row">
+                                <div class="gl-dot" style="background:var(--text3)"></div>misc
+                            </div>
+                        </div>
+                        <div class="graph-detail" id="graphDetail">
+                            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.06em">
+                                CLICK A NODE TO EXPLORE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DIVERGE PAGE -->
+                <div class="page" id="page-diverge">
+                    <div style="padding:0 0 12px;max-width:900px">
+                        <div
+                            style="font-family:var(--display);font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px">
+                            Divergence Suggestions</div>
+                        <div style="font-size:13px;color:var(--text2)">PCOS proactively finds learning opportunities
+                            matching your interests and free time.</div>
+                    </div>
+                    <div class="dv-grid" id="divergeList"></div>
+                </div>
+
+                <!-- SEARCH PAGE -->
+                <div class="page" id="page-search">
+                    <div class="search-header">
+                        <div class="search-big"><svg viewBox="0 0 16 16">
+                                <circle cx="7" cy="7" r="5" />
+                                <path d="M11 11l3 3" />
+                            </svg><input class="search-big-in" id="globalSearchPage" placeholder="search by meaning…">
+                        </div>
+                        <div class="search-results" id="searchResults"></div>
+                    </div>
+                </div>
+
+                <!-- FILES PAGE -->
+                <div class="page" id="page-files">
+                    <div class="files-toolbar">
+                        <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">indexed: <span
+                                id="indexedPaths">—</span></div>
+                        <div style="flex:1"></div>
+                        <div class="omni-wrap" style="margin-right:0"><svg viewBox="0 0 14 14">
+                                <circle cx="6" cy="6" r="4.5" />
+                                <path d="M9.5 9.5l3 3" />
+                            </svg><input class="omni-in" id="fileSearch" placeholder="search files…"></div><button
+                            class="tba-primary" id="indexFolderBtn"><svg viewBox="0 0 12 12">
+                                <path d="M6 2v8M2 6h8" />
+                            </svg>Index Folder</button>
+                    </div>
+                    <div class="files-body">
+                        <div
+                            style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">
+                            files · <span id="filesCount">0</span> indexed</div>
+                        <div class="files-grid" id="filesGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal-backdrop" id="captureBackdrop">
+        <div class="modal cap-modal">
+            <div class="cap-top">
+                <div class="cap-ic" id="capIc"><svg viewBox="0 0 12 12">
+                        <path d="M6 2v8M2 6h8" />
+                    </svg></div><input class="cap-in" id="capIn" placeholder="capture a thought…" autocomplete="off">
+            </div>
+            <div class="cap-modes">
+                <div class="cpm act" data-cap-mode="note"><svg viewBox="0 0 10 10">
+                        <rect x="1" y="1" width="8" height="8" rx="1" />
+                        <path d="M3 4h4M3 6h3" />
+                    </svg>note</div>
+                <div class="cpm" data-cap-mode="task"><svg viewBox="0 0 10 10">
+                        <path d="M2 4l1.5 1.5 3.5-3" />
+                    </svg>task</div>
+                <div class="cpm" data-cap-mode="idea"><svg viewBox="0 0 10 10">
+                        <circle cx="5" cy="4.5" r="2.5" />
+                        <path d="M3.5 7h3" />
+                    </svg>idea</div>
+                <div class="cpm" data-cap-mode="chat"><svg viewBox="0 0 10 10">
+                        <path d="M1 2h8a.5.5 0 010 1v4H5.5L4 8V7H1.5A.5.5 0 011 6.5V2.5A.5.5 0 011 2z" />
+                    </svg>chat</div>
+                <div class="cap-hint-right"><b>⏎</b> save &nbsp;<b>Esc</b> close</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop" id="taskModalBackdrop">
+        <div class="modal">
+            <div class="modal-head"><span class="modal-title">New Task</span><button class="modal-close"><svg
+                        viewBox="0 0 10 10">
+                        <path d="M2 2l6 6M8 2l-6 6" />
+                    </svg></button></div>
+            <div class="modal-body">
+                <div class="form-row"><span class="form-label">title</span><input class="form-in" id="newTaskTitle"
+                        placeholder="What needs to be done?"></div>
+                <div class="form-row-h">
+                    <div class="form-row"><span class="form-label">priority</span><select class="form-in"
+                            id="newTaskPriority">
+                            <option>high</option>
+                            <option selected>medium</option>
+                            <option>low</option>
+                        </select></div>
+                    <div class="form-row"><span class="form-label">due date</span><input class="form-in" type="date"
+                            id="newTaskDue"></div>
+                </div>
+                <div class="form-row"><span class="form-label">tags</span>
+                    <div class="tag-inp-wrap" id="taskTagsWrap"><input class="tag-inp" id="newTaskTagInput"
+                            placeholder="add tag…"></div>
+                </div>
+                <div class="form-row"><span class="form-label">notes</span><textarea class="form-in" id="newTaskNotes"
+                        placeholder="additional context…" style="min-height:60px"></textarea></div>
+                <div class="form-btns"><button class="btn-ghost" id="cancelTaskBtn">Cancel</button><button
+                        class="btn-primary" id="createTaskBtn">Create Task</button></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop" id="schedModalBackdrop">
+        <div class="modal">
+            <div class="modal-head"><span class="modal-title">New Schedule Block</span><button class="modal-close"><svg
+                        viewBox="0 0 10 10">
+                        <path d="M2 2l6 6M8 2l-6 6" />
+                    </svg></button></div>
+            <div class="modal-body">
+                <div class="form-row"><span class="form-label">title</span><input class="form-in" id="newBlockTitle"
+                        placeholder="Block name…"></div>
+                <div class="form-row-h">
+                    <div class="form-row"><span class="form-label">type</span><select class="form-in" id="newBlockType">
+                            <option>Deep Work</option>
+                            <option>Meeting</option>
+                            <option>Free / Learning</option>
+                            <option>Task Review</option>
+                            <option>Diverge</option>
+                        </select></div>
+                    <div class="form-row"><span class="form-label">date</span><input class="form-in" type="date"
+                            id="newBlockDate"></div>
+                </div>
+                <div class="form-row-h">
+                    <div class="form-row"><span class="form-label">start</span><input class="form-in" type="time"
+                            id="newBlockStart" value="09:00"></div>
+                    <div class="form-row"><span class="form-label">end</span><input class="form-in" type="time"
+                            id="newBlockEnd" value="11:00"></div>
+                </div>
+                <div class="form-btns"><button class="btn-ghost" id="cancelSchedBtn">Cancel</button><button
+                        class="btn-primary" id="addSchedBlockBtn">Add Block</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cmdpal-backdrop" id="cmdPalBackdrop">
+        <div class="cmdpal">
+            <div class="cp-top">
+                <div class="cp-mode" id="cpMode">›</div><input class="cp-in" id="cpIn" placeholder="type a command…">
+            </div>
+            <div class="cp-results" id="cpResults"></div>
+            <div class="cp-footer">
+                <div class="cp-hint"><span class="cp-key">↑↓</span>navigate</div>
+                <div class="cp-hint"><span class="cp-key">⏎</span>open</div>
+                <div class="cp-hint"><span class="cp-key">Esc</span>close</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
